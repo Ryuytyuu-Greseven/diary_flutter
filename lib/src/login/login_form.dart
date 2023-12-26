@@ -22,13 +22,45 @@ class LoginComponent extends StatelessWidget {
             // Define default text styles if needed
             ),
       ),
-      home: LoginForm(loginStylesHelper: loginStyles),
+      home: LoginInputForm(loginStylesHelper: loginStyles),
     );
   }
 }
 
-class LoginForm extends StatelessWidget {
+class LoginInputForm extends StatefulWidget {
+  const LoginInputForm({required this.loginStylesHelper});
+
+  final Map<String, TextStyle> loginStylesHelper;
+
+  @override
+  LoginForm createState() => LoginForm(loginStylesHelper: loginStylesHelper);
+}
+
+class LoginForm extends State<LoginInputForm> {
   LoginForm({required this.loginStylesHelper});
+
+// form contollers
+  final loginFormGroup = GlobalKey<FormState>();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (loginFormGroup.currentState!.validate()) {
+      // Form is valid, proceed with form submission
+      // Access input values from controllers: _nameController.text, _emailController.text
+      // Perform actions like sending data to a server, etc.
+      // For example:
+      print('Name: ${usernameController.text}');
+      print('Email: ${passwordController.text}');
+    }
+  }
 
   static const wheatColor = Color(0xFFf5deb3);
   static const loginCardCol = Color.fromARGB(255, 51, 51, 51);
@@ -48,6 +80,8 @@ class LoginForm extends StatelessWidget {
       color: loginCardCol,
       padding: EdgeInsets.all(15),
       child: Center(
+          child: Form(
+        key: loginFormGroup,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -60,17 +94,34 @@ class LoginForm extends StatelessWidget {
               style: loginStylesHelper['loginLabel'],
             ),
             TextFormField(
-                // decoration: InputDecoration(
-                //     labelText: 'Email',
-                //     labelStyle: TextStyle(
-                //       color: Colors.white,
-                //     )),
-                ),
+              controller: usernameController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your username';
+                }
+                return null;
+              },
+              // decoration: InputDecoration(
+              //     labelText: 'Email',
+              //     labelStyle: TextStyle(
+              //       color: Colors.white,
+              //     )),
+            ),
             Text(
               'Password',
               style: loginStylesHelper['loginLabel'],
             ),
             TextFormField(
+              controller: passwordController,
+              onChanged: (value){
+                print(value);
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                return null;
+              },
               style: TextStyle(color: Colors.white),
               // decoration: InputDecoration(
               //     labelText: 'Password',
@@ -91,7 +142,11 @@ class LoginForm extends StatelessWidget {
                           ElevatedButton(
                             onPressed: () {
                               print('Clicked');
-                              this.apiService.login({'body': 'test'});
+                              final body = {
+                                'username': usernameController.text,
+                                'password': passwordController.text
+                              };
+                              this.apiService.login(body);
                             },
                             child: const Text('Login'),
                           ),
@@ -109,7 +164,7 @@ class LoginForm extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      )),
     ));
   }
 }

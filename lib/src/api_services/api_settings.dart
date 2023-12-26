@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/export.dart';
 
 class ApiSettings {
-  static const globalUrl = 'http://localhost:1999';
+  static const globalUrl = 'http://192.168.1.3:1999';
   static const enckey =
-      r'#^&*NA#T)%!UR&E&*RY&$UYT/;YU^&U$@#NEXUS(SOCIAL$%KEY&)mindplay#%*^&@$89SPACE@#$93223%^&*(^';
+      r'#^&*NA#T)%!UR&E&*RY&$UYT/;YU^&U$@#NEXUS(SOCIAL$%KEY&)mindplay#%*^&@$89SPACE@#$93223%^&*(^DIARY';
 
   static const Map<String, String> apis = {
     'LOGIN_USER': '$globalUrl/users/login',
@@ -30,10 +31,10 @@ class ApiSettings {
     try {
       print('In Request');
       // encrypt data
-      final encData = {'stinky': encrypt(body)};
-
+      final encData = {'shiny': jsonEncode(body)};
+      print(encData);
       final response = await http.post(Uri.parse(url), body: encData);
-
+      print(response);
       // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
         print('Response body: ${response.body}');
@@ -41,6 +42,7 @@ class ApiSettings {
         // Handle error scenarios
         print('Request failed with status: ${response.statusCode}');
       }
+      return response;
     } catch (error) {
       // Handle network errors
       print('Error is: $error');
@@ -48,15 +50,90 @@ class ApiSettings {
   }
 
   encrypt(dataToEncrypt) {
+    if (enckey.isNotEmpty) {
+      try {
+        final keyBytes = utf8.encode(enckey);
+        final stringifyText = jsonEncode(dataToEncrypt);
+        final plaintext = utf8.encode(stringifyText);
+
+        final key = KeyParameter(keyBytes);
+        // final iv = IV.fromLength(16);
+
+        final blockCipher = BlockCipher('AES');
+        print('Final');
+        blockCipher.init(true, key);
+        final paddedPlaintext = padBlock(plaintext);
+        final ciphertext = blockCipher.process(paddedPlaintext);
+
+        print('Encrypted text: ${base64.encode(ciphertext)}');
+      } catch (e) {
+        print('Encryption error: $e');
+      }
+    }
+  }
+
+  Uint8List padBlock(Uint8List data) {
+    final paddingLength = 16 - (data.length % 16);
+    final pad = List.filled(paddingLength, paddingLength.toUnsigned(8));
+    final paddedData = Uint8List.fromList(data + pad);
+    return paddedData;
+  }
+
+  decrypt(encryptedData) {
+    try {
+      final keyBytes = utf8.encode(enckey);
+      final encryptedBytes = base64.decode(encryptedData);
+
+      final key = KeyParameter(keyBytes);
+      // final iv = IV.fromLength(16);
+
+      final blockCipher = BlockCipher('AES');
+      blockCipher.init(false, key); // false indicates for decryption
+
+      final decrypted = blockCipher.process(encryptedBytes);
+
+      final unpadData = unpadBlock(decrypted);
+      final stringifyData = utf8.decode(unpadData);
+      final dataDecrypted = jsonDecode(stringifyData);
+
+      print('Decrypted text: ${dataDecrypted}');
+    } catch (e) {
+      print('Decryption error: $e');
+    }
+  }
+
+  Uint8List unpadBlock(Uint8List data) {
+    final lastByte = data.last;
+    final padLength = lastByte.toInt();
+
+    if (padLength <= 0 || padLength > 16) {
+      throw Exception('Invalid padding length');
+    }
+    for (var i = data.length - padLength; i < data.length; i++) {
+      if (data[i] != padLength) {
+        throw Exception('Invalid padding');
+      }
+    }
+
+    return data.sublist(0, data.length - padLength);
+  }
+
+  encryptOld(dataToEncrypt) {
     try {
       if (enckey.isNotEmpty) {
-        final iv = IV.fromLength(16);
+        final IOVI = IV.fromUtf8(enckey);
         final key = Key.fromUtf8(enckey);
+        print(IOVI.base64);
+        print(key.length);
         final plainText = jsonEncode(dataToEncrypt);
-        final encrypter = Encrypter(AES(key));
+        final encrypter = Encrypter(AES(
+          key,
+          mode: AESMode.cbc,
+        ));
         try {
           print('In Enc ${dataToEncrypt} ${plainText}');
-          final encryptedText = encrypter.encrypt('test', iv: iv);
+          print(enckey);
+          final encryptedText = encrypter.encrypt('test', iv: IOVI);
         } catch (e) {
           print('Exception ${e}');
         }
@@ -66,12 +143,13 @@ class ApiSettings {
         return encryptedText.toString();
       }
     } catch (error) {
+      print('Encryption Error: $error');
       return;
     }
   }
 
   // decrypt data using nodejs crypto module
-  decrypt(String dataToDecrypt) {
+  decryptOld(String dataToDecrypt) {
     try {
       print('In DEnc ${dataToDecrypt}');
 
