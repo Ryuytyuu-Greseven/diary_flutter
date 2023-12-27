@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 300,
+                    height: 500,
                     child: Container(
                       // color: Colors.red,
                       height: 150,
@@ -43,10 +43,10 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                      height: 300,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      child: LoginLogo())
+                  // Container(
+                  //     height: 300,
+                  //     color: Color.fromARGB(255, 255, 255, 255),
+                  //     child: LoginLogo())
                 ],
               ),
             )));

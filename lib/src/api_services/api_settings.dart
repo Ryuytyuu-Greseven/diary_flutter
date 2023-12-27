@@ -6,7 +6,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:pointycastle/export.dart';
 
 class ApiSettings {
-  static const globalUrl = 'http://192.168.1.3:1999';
+  static const globalUrl = 'http://192.168.1.4:1999';
   static const enckey =
       r'#^&*NA#T)%!UR&E&*RY&$UYT/;YU^&U$@#NEXUS(SOCIAL$%KEY&)mindplay#%*^&@$89SPACE@#$93223%^&*(^DIARY';
 
@@ -36,13 +36,15 @@ class ApiSettings {
       final response = await http.post(Uri.parse(url), body: encData);
       print(response);
       // Check if the request was successful (status code 200)
-      if (response.statusCode == 200) {
+      if ([200, 201].contains(response.statusCode)) {
         print('Response body: ${response.body}');
       } else {
         // Handle error scenarios
         print('Request failed with status: ${response.statusCode}');
       }
-      return response;
+      final responseBody = json.decode(response.body);
+      // print(responseBody);
+      return responseBody;
     } catch (error) {
       // Handle network errors
       print('Error is: $error');

@@ -1,11 +1,13 @@
 import 'package:diary/src/api_services/api_service.dart';
 import 'package:diary/src/api_services/api_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginComponent extends StatelessWidget {
   final Map<String, TextStyle> loginStyles = {
     'loginLabel': const TextStyle(
         fontSize: 18.0, color: Color.fromARGB(255, 255, 255, 255)),
+    'loginInputText': const TextStyle(color: Colors.white),
     'errorLabel': const TextStyle(
         fontSize: 16.0, color: Color.fromARGB(255, 247, 118, 118)),
     // Add other named text styles as needed
@@ -39,10 +41,19 @@ class LoginInputForm extends StatefulWidget {
 class LoginForm extends State<LoginInputForm> {
   LoginForm({required this.loginStylesHelper});
 
+  final storage = const FlutterSecureStorage();
+
 // form contollers
   final loginFormGroup = GlobalKey<FormState>();
+  final signUpFormGroup = GlobalKey<FormState>();
+  TextEditingController profilenameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  // multiple forms
+  bool enableLoginForm = true;
+  bool enableSignupForm = false;
 
   @override
   void dispose() {
@@ -51,7 +62,7 @@ class LoginForm extends State<LoginInputForm> {
     super.dispose();
   }
 
-  void _submitForm() {
+  Future<void> loginForm() async {
     if (loginFormGroup.currentState!.validate()) {
       // Form is valid, proceed with form submission
       // Access input values from controllers: _nameController.text, _emailController.text
@@ -59,6 +70,48 @@ class LoginForm extends State<LoginInputForm> {
       // For example:
       print('Name: ${usernameController.text}');
       print('Email: ${passwordController.text}');
+
+      final body = {
+        'username': usernameController.text,
+        'password': passwordController.text
+      };
+      final loginResponse = await apiService.login(body);
+      print('Login Response ${loginResponse['success']}');
+      if (loginResponse != null && loginResponse['success'] == true) {
+        await storage.write(
+            key: 'auth_token', value: loginResponse['data']['access_token']);
+        await storage.write(
+            key: 'username', value: loginResponse['data']['username']);
+        await storage.write(
+            key: 'profilename', value: loginResponse['data']['profilename']);
+        await storage.write(
+            key: 'email', value: loginResponse['data']['email']);
+
+        // navigate to books view
+      }
+    }
+  }
+
+  Future<void> signUpForm() async {
+    if (signUpFormGroup.currentState!.validate()) {
+      // Form is valid, proceed with form submission
+      // Access input values from controllers: _nameController.text, _emailController.text
+      // Perform actions like sending data to a server, etc.
+      // For example:
+      print('Name: ${usernameController.text}');
+      print('Email: ${passwordController.text}');
+
+      final body = {
+        'username': usernameController.text,
+        'password': passwordController.text,
+        'email': emailController.text,
+        'profilename': profilenameController.text,
+      };
+      final loginResponse = await apiService.singup(body);
+      print('Login Response ${loginResponse['success']}');
+      if (loginResponse != null && loginResponse['success'] == true) {
+        // otp confirmation
+      }
     }
   }
 
@@ -80,8 +133,6 @@ class LoginForm extends State<LoginInputForm> {
       color: loginCardCol,
       padding: EdgeInsets.all(15),
       child: Center(
-          child: Form(
-        key: loginFormGroup,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -89,47 +140,180 @@ class LoginForm extends State<LoginInputForm> {
               'Login',
               style: TextStyle(color: wheatColor),
             ),
-            Text(
-              'User Name',
-              style: loginStylesHelper['loginLabel'],
-            ),
-            TextFormField(
-              controller: usernameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your username';
-                }
-                return null;
-              },
-              // decoration: InputDecoration(
-              //     labelText: 'Email',
-              //     labelStyle: TextStyle(
-              //       color: Colors.white,
-              //     )),
-            ),
-            Text(
-              'Password',
-              style: loginStylesHelper['loginLabel'],
-            ),
-            TextFormField(
-              controller: passwordController,
-              onChanged: (value){
-                print(value);
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
-                }
-                return null;
-              },
-              style: TextStyle(color: Colors.white),
-              // decoration: InputDecoration(
-              //     labelText: 'Password',
-              //     labelStyle: TextStyle(
-              //       color: Colors.white,
-              //     )),
-              obscureText: true,
-            ),
+            Visibility(
+                visible: enableLoginForm,
+                child: Form(
+                    key: loginFormGroup,
+                    child: Column(
+                      children: [
+                        Text(
+                          'User Name',
+                          style: loginStylesHelper['loginLabel'],
+                        ),
+                        TextFormField(
+                          style: loginStylesHelper['loginInputText'],
+                          controller: usernameController,
+                          onChanged: (value) {
+                            print(value);
+                            setState(() {
+                              usernameController.text =
+                                  value.replaceAll(' ', '_');
+                              usernameController.selection =
+                                  TextSelection.collapsed(
+                                      offset: usernameController.text.length);
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your username';
+                            }
+
+                            return null;
+                          },
+                          // decoration: InputDecoration(
+                          //     labelText: 'Email',
+                          //     labelStyle: TextStyle(
+                          //       color: Colors.white,
+                          //     )),
+                        ),
+                        Text(
+                          'Password',
+                          style: loginStylesHelper['loginLabel'],
+                        ),
+                        TextFormField(
+                          controller: passwordController,
+                          onChanged: (value) {
+                            print(value);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                          style: loginStylesHelper['loginInputText'],
+                          // decoration: InputDecoration(
+                          //     labelText: 'Password',
+                          //     labelStyle: TextStyle(
+                          //       color: Colors.white,
+                          //     )),
+                          obscureText: true,
+                        ),
+                      ],
+                    ))),
+            Visibility(
+                visible: enableSignupForm,
+                child: Form(
+                    key: signUpFormGroup,
+                    child: Column(
+                      children: [
+                        Text(
+                          'Profile Name',
+                          style: loginStylesHelper['loginLabel'],
+                        ),
+                        TextFormField(
+                          style: loginStylesHelper['loginInputText'],
+                          controller: profilenameController,
+                          onChanged: (value) {
+                            print(value);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your profile name';
+                            }
+
+                            return null;
+                          },
+                          // decoration: InputDecoration(
+                          //     labelText: 'Email',
+                          //     labelStyle: TextStyle(
+                          //       color: Colors.white,
+                          //     )),
+                        ),
+                        Text(
+                          'Email',
+                          style: loginStylesHelper['loginLabel'],
+                        ),
+                        TextFormField(
+                          style: loginStylesHelper['loginInputText'],
+                          controller: emailController,
+                          onChanged: (value) {
+                            print(value);
+                            setState(() {
+                              emailController.text = value.replaceAll(' ', '');
+                              emailController.selection =
+                                  TextSelection.collapsed(
+                                      offset: emailController.text.length);
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+
+                            return null;
+                          },
+                          // decoration: InputDecoration(
+                          //     labelText: 'Email',
+                          //     labelStyle: TextStyle(
+                          //       color: Colors.white,
+                          //     )),
+                        ),
+                        Text(
+                          'User Name',
+                          style: loginStylesHelper['loginLabel'],
+                        ),
+                        TextFormField(
+                          style: loginStylesHelper['loginInputText'],
+                          controller: usernameController,
+                          onChanged: (value) {
+                            print(value);
+                            setState(() {
+                              usernameController.text =
+                                  value.replaceAll(' ', '_');
+                              usernameController.selection =
+                                  TextSelection.collapsed(
+                                      offset: usernameController.text.length);
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your username';
+                            }
+
+                            return null;
+                          },
+                          // decoration: InputDecoration(
+                          //     labelText: 'Email',
+                          //     labelStyle: TextStyle(
+                          //       color: Colors.white,
+                          //     )),
+                        ),
+                        Text(
+                          'Password',
+                          style: loginStylesHelper['loginLabel'],
+                        ),
+                        TextFormField(
+                          controller: passwordController,
+                          onChanged: (value) {
+                            print(value);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                          style: loginStylesHelper['loginInputText'],
+                          // decoration: InputDecoration(
+                          //     labelText: 'Password',
+                          //     labelStyle: TextStyle(
+                          //       color: Colors.white,
+                          //     )),
+                          obscureText: true,
+                        ),
+                      ],
+                    ))),
             Center(
               child: Padding(
                   padding: EdgeInsets.all(20),
@@ -139,21 +323,32 @@ class LoginForm extends State<LoginInputForm> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              print('Clicked');
-                              final body = {
-                                'username': usernameController.text,
-                                'password': passwordController.text
-                              };
-                              this.apiService.login(body);
-                            },
-                            child: const Text('Login'),
-                          ),
+                          Visibility(
+                              visible: enableLoginForm,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  print('Clicked');
+                                  loginForm();
+                                },
+                                child: const Text('Login'),
+                              )),
+                          Visibility(
+                              visible: enableSignupForm,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  print('Clicked');
+                                  signUpForm();
+                                },
+                                child: const Text('Sign Up'),
+                              )),
                           const SizedBox(width: 20),
                           ElevatedButton(
                             onPressed: () {
-                              // Implement login logic here
+                              setState(() {
+                                enableLoginForm = !enableLoginForm;
+                                enableSignupForm = !enableSignupForm;
+                              });
+                              print('Switched');
                             },
                             child: const Text('Switch'),
                           ),
@@ -164,7 +359,7 @@ class LoginForm extends State<LoginInputForm> {
             ),
           ],
         ),
-      )),
+      ),
     ));
   }
 }
