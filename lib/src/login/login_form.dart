@@ -51,14 +51,44 @@ class LoginForm extends State<LoginInputForm> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  // OTP
+  List<FocusNode> focusNodes = [
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+  ];
+  late List<TextEditingController> otpControllers;
+
   // multiple forms
   bool enableLoginForm = true;
   bool enableSignupForm = false;
+  bool enableOtpForm = false;
+
+// data to process
+  static String userIdToProcess = '';
+
+// initial state
+  @override
+  void initState() {
+    super.initState();
+
+    // generating multiple controllers for otp
+    otpControllers = List.generate(4, (index) => TextEditingController());
+  }
 
   @override
   void dispose() {
     usernameController.dispose();
     passwordController.dispose();
+    profilenameController.dispose();
+    emailController.dispose();
+
+    // disposing all the otp controllers
+    for (var singleOtpController in otpControllers) {
+      singleOtpController.dispose();
+    }
+
     super.dispose();
   }
 
@@ -92,6 +122,7 @@ class LoginForm extends State<LoginInputForm> {
     }
   }
 
+// user sign up form
   Future<void> signUpForm() async {
     if (signUpFormGroup.currentState!.validate()) {
       // Form is valid, proceed with form submission
@@ -110,9 +141,55 @@ class LoginForm extends State<LoginInputForm> {
       final loginResponse = await apiService.singup(body);
       print('Login Response ${loginResponse['success']}');
       if (loginResponse != null && loginResponse['success'] == true) {
+        print('In Success');
+        setState(() {
+          userIdToProcess = loginResponse['userId'];
+        });
         // otp confirmation
+        switchOtp();
       }
     }
+  }
+
+// verify OTP of a user
+  Future<void> verifyOtpForm() async {
+    String otp = '';
+    for (var index = 0; index < 4; index++) {
+      otp += otpControllers[index].text;
+    }
+
+    final body = {
+      'userId': userIdToProcess,
+      'otp': otp,
+    };
+
+    final otpResponse = await apiService.verifyUser(body);
+    if (otpResponse != null && otpResponse['success']) {
+      print('OTP verified');
+      setState(() {
+        userIdToProcess = '';
+        enableLoginForm = true;
+        enableOtpForm = false;
+        enableSignupForm = false;
+      });
+    }
+  }
+
+// switch logins
+  Future<void> switchForm() async {
+    setState(() {
+      enableLoginForm = !enableLoginForm;
+      enableSignupForm = !enableSignupForm;
+      // enableOtpForm = !enableOtpForm;
+    });
+  }
+
+// switch to otp form
+  Future<void> switchOtp() async {
+    setState(() {
+      enableOtpForm = true;
+      enableSignupForm = false;
+    });
   }
 
   static const wheatColor = Color(0xFFf5deb3);
@@ -122,6 +199,30 @@ class LoginForm extends State<LoginInputForm> {
 
   // api services
   final apiService = ApiService();
+
+// single otp field
+  Widget otpField(int index) {
+    return Container(
+      width: 50.0,
+      child: TextField(
+        style: loginStylesHelper['loginInputText'],
+        controller: otpControllers[index],
+        // keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+        focusNode: focusNodes[index],
+        onChanged: (value) {
+          if (value.isNotEmpty && index < focusNodes.length - 1) {
+            FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+          }
+        },
+        decoration: const InputDecoration(
+          counter: Offstage(),
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -314,6 +415,27 @@ class LoginForm extends State<LoginInputForm> {
                         ),
                       ],
                     ))),
+            Visibility(
+                visible: enableOtpForm,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Entre OTP',
+                      style: loginStylesHelper['loginLabel'],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        otpField(0),
+                        otpField(1),
+                        otpField(2),
+                        otpField(3)
+                      ],
+                    )
+                  ],
+                )),
             Center(
               child: Padding(
                   padding: EdgeInsets.all(20),
@@ -342,16 +464,26 @@ class LoginForm extends State<LoginInputForm> {
                                 child: const Text('Sign Up'),
                               )),
                           const SizedBox(width: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                enableLoginForm = !enableLoginForm;
-                                enableSignupForm = !enableSignupForm;
-                              });
-                              print('Switched');
-                            },
-                            child: const Text('Switch'),
+                          Visibility(
+                            visible: enableLoginForm || enableSignupForm,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                switchForm();
+                                print('Switched');
+                              },
+                              child: const Text('Switch'),
+                            ),
                           ),
+                          Visibility(
+                            visible: enableOtpForm,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                verifyOtpForm();
+                                print('Verify');
+                              },
+                              child: const Text('Verify'),
+                            ),
+                          )
                         ],
                       ),
                     ],
