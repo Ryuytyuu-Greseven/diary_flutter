@@ -1,9 +1,14 @@
 import 'package:diary/src/api_services/api_service.dart';
 import 'package:diary/src/api_services/api_settings.dart';
+import 'package:diary/src/book/books_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginComponent extends StatelessWidget {
+  final BuildContext globalContext;
+
+  LoginComponent(this.globalContext);
+
   final Map<String, TextStyle> loginStyles = {
     'loginLabel': const TextStyle(
         fontSize: 18.0, color: Color.fromARGB(255, 255, 255, 255)),
@@ -24,22 +29,29 @@ class LoginComponent extends StatelessWidget {
             // Define default text styles if needed
             ),
       ),
-      home: LoginInputForm(loginStylesHelper: loginStyles),
+      home: LoginInputForm(
+          loginStylesHelper: loginStyles, globalContext1: globalContext),
     );
   }
 }
 
 class LoginInputForm extends StatefulWidget {
-  const LoginInputForm({required this.loginStylesHelper});
+  final BuildContext globalContext1;
+
+  const LoginInputForm(
+      {required this.loginStylesHelper, required this.globalContext1});
 
   final Map<String, TextStyle> loginStylesHelper;
 
   @override
-  LoginForm createState() => LoginForm(loginStylesHelper: loginStylesHelper);
+  LoginForm createState() => LoginForm(
+      loginStylesHelper: loginStylesHelper, globalContext2: globalContext1);
 }
 
 class LoginForm extends State<LoginInputForm> {
-  LoginForm({required this.loginStylesHelper});
+  final BuildContext globalContext2;
+
+  LoginForm({required this.loginStylesHelper, required this.globalContext2});
 
   final storage = const FlutterSecureStorage();
 
@@ -92,7 +104,7 @@ class LoginForm extends State<LoginInputForm> {
     super.dispose();
   }
 
-  Future<void> loginForm() async {
+  Future<void> loginForm(BuildContext context) async {
     if (loginFormGroup.currentState!.validate()) {
       // Form is valid, proceed with form submission
       // Access input values from controllers: _nameController.text, _emailController.text
@@ -118,6 +130,10 @@ class LoginForm extends State<LoginInputForm> {
             key: 'email', value: loginResponse['data']['email']);
 
         // navigate to books view
+        Navigator.pushNamed(
+          context,
+          '/books-catalog',
+        );
       }
     }
   }
@@ -449,8 +465,13 @@ class LoginForm extends State<LoginInputForm> {
                               visible: enableLoginForm,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  try {
+                                    loginForm(globalContext2);
+                                  } catch (e) {
+                                    print('Error got that : ${e}');
+                                  }
+
                                   print('Clicked');
-                                  loginForm();
                                 },
                                 child: const Text('Login'),
                               )),

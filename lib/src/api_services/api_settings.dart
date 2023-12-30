@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:typed_data';
@@ -6,7 +7,9 @@ import 'package:encrypt/encrypt.dart';
 import 'package:pointycastle/export.dart';
 
 class ApiSettings {
-  static const globalUrl = 'http://192.168.1.4:1999';
+  final storage = const FlutterSecureStorage();
+
+  static const globalUrl = 'http://192.168.1.2:1999';
   static const enckey =
       r'#^&*NA#T)%!UR&E&*RY&$UYT/;YU^&U$@#NEXUS(SOCIAL$%KEY&)mindplay#%*^&@$89SPACE@#$93223%^&*(^DIARY';
 
@@ -33,7 +36,12 @@ class ApiSettings {
       // encrypt data
       final encData = {'shiny': jsonEncode(body)};
       print(encData);
-      final response = await http.post(Uri.parse(url), body: encData);
+
+      final token = await storage.read(key: 'auth_token');
+      final headers = {'Authorization': 'Bearer $token'};
+      print(headers);
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: encData);
       print(response);
       // Check if the request was successful (status code 200)
       if ([200, 201].contains(response.statusCode)) {

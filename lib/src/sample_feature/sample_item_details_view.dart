@@ -13,9 +13,12 @@ class SampleItemDetailsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text(bookTitle),
       ),
-      body: const Center(
-        child: Text('More Information Here'),
-      ),
+      body: Center(
+          child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/books-catalog');
+              },
+              child: Text('More Information Here'))),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:diary/src/book/books_catalog.dart';
+import 'package:diary/src/login/login_form.dart';
 import 'package:diary/src/login/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,6 +11,10 @@ import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
 /// The Widget that configures your application.
+
+// global context changes
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
@@ -63,24 +69,33 @@ class MyApp extends StatelessWidget {
 
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
+          // routes: {
+          //   '/': (context) => LoginComponent(context),
+          //   // '/login': (context) => LoginComponent(context),
+          //   '/books-catalog': (context) => const BooksCatalog()
+          // },
+          navigatorKey: navigatorKey,
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
+                print('route details ${routeSettings.name}');
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case SampleItemDetailsView.routeName:
                     return const SampleItemDetailsView();
                   // case SampleItemListView.routeName:
+                  case BooksCatalog.routeName:
+                    return const BooksCatalog();
                   case LoginScreen.routeName:
                   default:
-                    // return const SampleItemListView();
-                    return const LoginScreen();
+                    return LoginScreen(globalContext: context);
                 }
               },
             );
           },
+          // home: LoginComponent(),
         );
       },
     );

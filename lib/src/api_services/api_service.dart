@@ -7,7 +7,6 @@ class ApiService {
 
   login(body) {
     final url = '${ApiSettings.apis['LOGIN_USER']}';
-    print('login  ${body}\n ${url}');
     return apiSettings.requestServer(body, url);
   }
 

@@ -3,7 +3,8 @@ import 'package:diary/src/login/login_logo.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final BuildContext globalContext;
+  const LoginScreen({super.key, required this.globalContext});
 
   static const routeName = '/login';
 
@@ -39,7 +40,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(25),
-                        child: LoginComponent(),
+                        child: LoginComponent(globalContext),
                       ),
                     ),
                   ),
