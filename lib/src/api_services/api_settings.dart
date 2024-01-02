@@ -9,7 +9,7 @@ import 'package:pointycastle/export.dart';
 class ApiSettings {
   final storage = const FlutterSecureStorage();
 
-  static const globalUrl = 'http://192.168.1.2:1999';
+  static const globalUrl = 'http://192.168.1.9:1999';
   static const enckey =
       r'#^&*NA#T)%!UR&E&*RY&$UYT/;YU^&U$@#NEXUS(SOCIAL$%KEY&)mindplay#%*^&@$89SPACE@#$93223%^&*(^DIARY';
 

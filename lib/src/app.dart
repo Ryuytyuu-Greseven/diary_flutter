@@ -76,21 +76,23 @@ class MyApp extends StatelessWidget {
           // },
           navigatorKey: navigatorKey,
           onGenerateRoute: (RouteSettings routeSettings) {
+            final finalRoute = routeSettings.name?.split('/')[1];
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
                 print('route details ${routeSettings.name}');
-                switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
-                  case SampleItemDetailsView.routeName:
-                    return const SampleItemDetailsView();
-                  // case SampleItemListView.routeName:
-                  case BooksCatalog.routeName:
-                    return const BooksCatalog();
-                  case LoginScreen.routeName:
-                  default:
-                    return LoginScreen(globalContext: context);
+                if (SettingsView.routeName.isNotEmpty &&
+                    SettingsView.routeName == routeSettings.name) {
+                  return SettingsView(controller: settingsController);
+                } else if (SampleItemDetailsView.routeName.isNotEmpty &&
+                    SampleItemDetailsView.routeName == routeSettings.name) {
+                  return const SampleItemDetailsView();
+                } else if (BooksCatalog.routeName.isNotEmpty &&
+                    routeSettings.name!.isNotEmpty) {
+                  print('I am here');
+                  return const BooksCatalog();
+                } else {
+                  return LoginScreen(globalContext: context);
                 }
               },
             );

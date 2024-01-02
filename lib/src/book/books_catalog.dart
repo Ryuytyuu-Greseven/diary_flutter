@@ -1,4 +1,5 @@
 import 'package:diary/src/api_services/api_service.dart';
+import 'package:diary/src/book/single_book.dart';
 import 'package:flutter/material.dart';
 
 class BooksCatalog extends StatefulWidget {
@@ -53,6 +54,7 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
   return GestureDetector(
       onTap: () {
         // book open logic
+        Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
       },
       child: Container(
         width: 250,
@@ -67,10 +69,10 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Color.fromARGB(255, 212, 205, 205).withOpacity(0.5),
-                spreadRadius: 5, // Spread radius
-                blurRadius: 10, // Blur radius
-                offset: Offset(8, 12), // Offset
+                color: Color.fromARGB(255, 97, 85, 85).withOpacity(0.5),
+                spreadRadius: 2, // Spread radius
+                blurRadius: 8, // Blur radius
+                offset: Offset(10, 8), // Offset
               ),
             ]),
         child: Column(
@@ -115,7 +117,7 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
                 style: TextStyle(
                     color: Color(titleColor),
                     fontFamily: singleDiary['titleConfig']['font'],
-                    fontSize: 35),
+                    fontSize: 25),
               ),
             )
             // title tag
@@ -190,6 +192,23 @@ class BooksCatalogState extends State<BooksCatalog> {
                 ],
               ),
             ))));
+  }
+
+  Route onGenerateRoute(RouteSettings settings) {
+    late Widget page;
+    print('new route: $settings["name"]');
+    final bookId = settings.name?.split('/')[2];
+
+    if (bookId != null && bookId.isNotEmpty) {
+      page = SingleBook(bookId: bookId, globalContext: context);
+    }
+
+    return MaterialPageRoute<dynamic>(
+      builder: (context) {
+        return page;
+      },
+      settings: settings,
+    );
   }
 }
 
