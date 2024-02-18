@@ -1,6 +1,7 @@
 import 'package:diary/src/login/login_form.dart';
 import 'package:diary/src/login/login_logo.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
   final BuildContext globalContext;
@@ -12,15 +13,27 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'DIARY',
-            style: TextStyle(
-              // backgroundColor: Colors.black,
-              color: Color.fromARGB(255, 255, 255, 255),
-              // backgroundColor: Colors.black
+            backgroundColor: Color.fromARGB(255, 0, 0, 0),
+            title: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.white, width: 2)),
+              child: Center(
+                child: Text(
+                  'DIARY',
+                  style: GoogleFonts.getFont('Montserrat',
+                      // backgroundColor: Colors.black,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontStyle: FontStyle.normal,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 10
+                      // backgroundColor: Colors.black
+                      ),
+                ),
+              ),
+            )
             ),
-          ),
-        ),
         body: Container(
             color: Colors.black,
             child: Center(
@@ -28,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 500,
+                    height: 350,
                     child: Container(
                       // color: Colors.red,
                       height: 150,

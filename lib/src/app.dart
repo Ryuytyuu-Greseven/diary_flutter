@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
                     SampleItemDetailsView.routeName == routeSettings.name) {
                   return const SampleItemDetailsView();
                 } else if (BooksCatalog.routeName.isNotEmpty &&
-                    routeSettings.name!.isNotEmpty) {
+                    BooksCatalog.routeName == routeSettings.name) {
                   print('I am here');
                   return const BooksCatalog();
                 } else {

@@ -1,6 +1,7 @@
 import 'package:diary/src/api_services/api_service.dart';
 import 'package:diary/src/book/single_book.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BooksCatalog extends StatefulWidget {
   const BooksCatalog({super.key});
@@ -53,8 +54,9 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
 
   return GestureDetector(
       onTap: () {
+        print('Book Selected!');
         // book open logic
-        Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
+        // Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
       },
       child: Container(
         width: 250,
@@ -79,22 +81,42 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(children: [
-              Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(214, 73, 71, 70),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white, width: 2)),
-                    child: Text(
-                      singleDiary['type'] == 1 ? 'Personal Book' : 'Story Book',
-                      style: TextStyle(
-                          color: Colors.white,
-                          // fontFamily: Font/*  */,
-                          fontSize: 15),
-                    ),
-                  )),
+              Row(
+                children: [
+                  Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(214, 73, 71, 70),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.white, width: 2)),
+                        child: Icon(
+                          singleDiary['accessLevel'] == 1
+                              ? Icons.lock_open
+                              : Icons.lock,
+                        ),
+                      )),
+                  Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(214, 73, 71, 70),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.white, width: 2)),
+                        child: Text(
+                          singleDiary['type'] == 1
+                              ? 'Personal Book'
+                              : 'Story Book',
+                          style: TextStyle(
+                              color: Colors.white,
+                              // fontFamily: Font/*  */,
+                              fontSize: 15),
+                        ),
+                      )),
+                ],
+              ),
               Positioned(
                 top: -8,
                 right: 0,
@@ -163,8 +185,26 @@ class BooksCatalogState extends State<BooksCatalog> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Books'),
-        ),
+            backgroundColor: Colors.black,
+            title: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.white, width: 2)),
+              child: Center(
+                child: Text(
+                  'Books',
+                  style: GoogleFonts.getFont('Montserrat',
+                      // backgroundColor: Colors.black,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontStyle: FontStyle.normal,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 10
+                      // backgroundColor: Colors.black
+                      ),
+                ),
+              ),
+            )),
         body: Container(
             // width: 50,
             // margin: EdgeInsets.fromLTRB(0, 15, 0, 0),

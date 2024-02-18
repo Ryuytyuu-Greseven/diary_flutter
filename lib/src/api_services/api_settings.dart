@@ -9,7 +9,8 @@ import 'package:pointycastle/export.dart';
 class ApiSettings {
   final storage = const FlutterSecureStorage();
 
-  static const globalUrl = 'http://192.168.1.9:1999';
+  // static const globalUrl = 'http://192.168.1.9:1999';
+  static const globalUrl = 'https://rg-dairy.fly.dev';
   static const enckey =
       r'#^&*NA#T)%!UR&E&*RY&$UYT/;YU^&U$@#NEXUS(SOCIAL$%KEY&)mindplay#%*^&@$89SPACE@#$93223%^&*(^DIARY';
 
@@ -38,6 +39,10 @@ class ApiSettings {
       print(encData);
 
       final token = await storage.read(key: 'auth_token');
+      // if (token != null && token.isNotEmpty) {
+
+      //   throw ErrorDescription('Access Denied!');
+      // }
       final headers = {'Authorization': 'Bearer $token'};
       print(headers);
       final response =

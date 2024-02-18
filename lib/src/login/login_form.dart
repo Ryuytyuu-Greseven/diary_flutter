@@ -76,6 +76,8 @@ class LoginForm extends State<LoginInputForm> {
   bool enableLoginForm = true;
   bool enableSignupForm = false;
   bool enableOtpForm = false;
+  bool invalidCredentials = false;
+  String errorMessage = '';
 
 // data to process
   static String userIdToProcess = '';
@@ -120,6 +122,8 @@ class LoginForm extends State<LoginInputForm> {
       final loginResponse = await apiService.login(body);
       print('Login Response ${loginResponse['success']}');
       if (loginResponse != null && loginResponse['success'] == true) {
+        invalidCredentials = false;
+        errorMessage = '';
         await storage.write(
             key: 'auth_token', value: loginResponse['data']['access_token']);
         await storage.write(
@@ -134,6 +138,11 @@ class LoginForm extends State<LoginInputForm> {
           context,
           '/books-catalog',
         );
+      } else {
+        setState(() {
+          invalidCredentials = true;
+          errorMessage = loginResponse['message'];
+        });
       }
     }
   }
@@ -155,7 +164,7 @@ class LoginForm extends State<LoginInputForm> {
         'profilename': profilenameController.text,
       };
       final loginResponse = await apiService.singup(body);
-      print('Login Response ${loginResponse['success']}');
+      print('Signup Response ${loginResponse['success']}');
       if (loginResponse != null && loginResponse['success'] == true) {
         print('In Success');
         setState(() {
@@ -163,6 +172,11 @@ class LoginForm extends State<LoginInputForm> {
         });
         // otp confirmation
         switchOtp();
+      } else {
+        setState(() {
+          invalidCredentials = true;
+          errorMessage = loginResponse['message'];
+        });
       }
     }
   }
@@ -187,6 +201,8 @@ class LoginForm extends State<LoginInputForm> {
         enableLoginForm = true;
         enableOtpForm = false;
         enableSignupForm = false;
+        invalidCredentials = false;
+        errorMessage = '';
       });
     }
   }
@@ -196,6 +212,8 @@ class LoginForm extends State<LoginInputForm> {
     setState(() {
       enableLoginForm = !enableLoginForm;
       enableSignupForm = !enableSignupForm;
+      invalidCredentials = false;
+      errorMessage = '';
       // enableOtpForm = !enableOtpForm;
     });
   }
@@ -205,6 +223,8 @@ class LoginForm extends State<LoginInputForm> {
     setState(() {
       enableOtpForm = true;
       enableSignupForm = false;
+      invalidCredentials = false;
+      errorMessage = '';
     });
   }
 
@@ -253,10 +273,10 @@ class LoginForm extends State<LoginInputForm> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Login',
-              style: TextStyle(color: wheatColor),
-            ),
+            // const Text(
+            //   'Login',
+            //   style: TextStyle(color: wheatColor),
+            // ),
             Visibility(
                 visible: enableLoginForm,
                 child: Form(
@@ -485,16 +505,16 @@ class LoginForm extends State<LoginInputForm> {
                                 child: const Text('Sign Up'),
                               )),
                           const SizedBox(width: 20),
-                          Visibility(
-                            visible: enableLoginForm || enableSignupForm,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                switchForm();
-                                print('Switched');
-                              },
-                              child: const Text('Switch'),
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: enableLoginForm || enableSignupForm,
+                          //   child: ElevatedButton(
+                          //     onPressed: () {
+                          //       switchForm();
+                          //       print('Switched');
+                          //     },
+                          //     child: const Text('Switch'),
+                          //   ),
+                          // ),
                           Visibility(
                             visible: enableOtpForm,
                             child: ElevatedButton(
@@ -510,6 +530,12 @@ class LoginForm extends State<LoginInputForm> {
                     ],
                   )),
             ),
+            Visibility(
+                visible: invalidCredentials,
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.red),
+                ))
           ],
         ),
       ),
