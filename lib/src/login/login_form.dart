@@ -113,7 +113,7 @@ class LoginForm extends State<LoginInputForm> {
       // Perform actions like sending data to a server, etc.
       // For example:
       print('Name: ${usernameController.text}');
-      print('Email: ${passwordController.text}');
+      // print('Email: ${passwordController.text}');
 
       final body = {
         'username': usernameController.text,
@@ -155,7 +155,7 @@ class LoginForm extends State<LoginInputForm> {
       // Perform actions like sending data to a server, etc.
       // For example:
       print('Name: ${usernameController.text}');
-      print('Email: ${passwordController.text}');
+      // print('Email: ${passwordController.text}');
 
       final body = {
         'username': usernameController.text,

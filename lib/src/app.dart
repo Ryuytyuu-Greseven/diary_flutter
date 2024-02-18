@@ -1,4 +1,5 @@
 import 'package:diary/src/book/books_catalog.dart';
+import 'package:diary/src/book/single_book.dart';
 import 'package:diary/src/login/login_form.dart';
 import 'package:diary/src/login/login_view.dart';
 import 'package:flutter/material.dart';
@@ -77,20 +78,30 @@ class MyApp extends StatelessWidget {
           navigatorKey: navigatorKey,
           onGenerateRoute: (RouteSettings routeSettings) {
             final finalRoute = routeSettings.name?.split('/')[1];
+            final uri = Uri.parse(routeSettings.name ?? '');
+            final pathSegments = uri.pathSegments;
+
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
-                print('route details ${routeSettings.name}');
+                print(
+                    'route details ${routeSettings.name} ${finalRoute} ${pathSegments}');
                 if (SettingsView.routeName.isNotEmpty &&
                     SettingsView.routeName == routeSettings.name) {
                   return SettingsView(controller: settingsController);
                 } else if (SampleItemDetailsView.routeName.isNotEmpty &&
                     SampleItemDetailsView.routeName == routeSettings.name) {
                   return const SampleItemDetailsView();
-                } else if (BooksCatalog.routeName.isNotEmpty &&
+                } else if (pathSegments?.length == 1 &&
+                    BooksCatalog.routeName.isNotEmpty &&
                     BooksCatalog.routeName == routeSettings.name) {
-                  print('I am here');
-                  return const BooksCatalog();
+                  print('I am here ${pathSegments}');
+                  return BooksCatalog(globalContext: context);
+                } else if (pathSegments?.length == 2 &&
+                    '/${pathSegments[0]}' == BooksCatalog.routeName) {
+                  print('single book');
+                  return SingleBook(
+                      bookId: pathSegments[1], globalContext: context);
                 } else {
                   return LoginScreen(globalContext: context);
                 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BooksCatalog extends StatefulWidget {
-  const BooksCatalog({super.key});
+  final BuildContext globalContext;
+  const BooksCatalog({super.key, required this.globalContext});
 
   static const routeName = '/books-catalog';
 
@@ -22,7 +23,8 @@ class BooksCatalog extends StatefulWidget {
   //               child: Text('More Information Here'))));
   // }
   @override
-  BooksCatalogState createState() => BooksCatalogState();
+  BooksCatalogState createState() =>
+      BooksCatalogState(globalContext: this.globalContext);
 }
 
 // class BookDiaryMini {
@@ -56,7 +58,7 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
       onTap: () {
         print('Book Selected!');
         // book open logic
-        // Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
+        Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
       },
       child: Container(
         width: 250,
@@ -149,6 +151,9 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
 }
 
 class BooksCatalogState extends State<BooksCatalog> {
+  final BuildContext globalContext;
+  BooksCatalogState({required this.globalContext});
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   static List selfDiaries = [
@@ -240,7 +245,7 @@ class BooksCatalogState extends State<BooksCatalog> {
     final bookId = settings.name?.split('/')[2];
 
     if (bookId != null && bookId.isNotEmpty) {
-      page = SingleBook(bookId: bookId, globalContext: context);
+      page = SingleBook(bookId: bookId, globalContext: this.globalContext);
     }
 
     return MaterialPageRoute<dynamic>(
