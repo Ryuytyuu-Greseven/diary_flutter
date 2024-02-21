@@ -5,6 +5,7 @@ import 'package:diary/src/login/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'sample_feature/sample_item_details_view.dart';
 import 'sample_feature/sample_item_list_view.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
   });
 
   final SettingsController settingsController;
+  static const storage = FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
           // returns to the app after it has been killed while running in the
           // background.
           restorationScopeId: 'app',
+          debugShowCheckedModeBanner: false,
 
           // Provide the generated AppLocalizations to the MaterialApp. This
           // allows descendant Widgets to display the correct translations
@@ -84,6 +87,9 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
+                // fetch user details and navigate to books
+                final accessToken = storage.read(key: 'access_token');
+
                 print(
                     'route details ${routeSettings.name} ${finalRoute} ${pathSegments}');
                 if (SettingsView.routeName.isNotEmpty &&
@@ -102,6 +108,9 @@ class MyApp extends StatelessWidget {
                   print('single book');
                   return SingleBook(
                       bookId: pathSegments[1], globalContext: context);
+                } else if (accessToken.toString().isNotEmpty) {
+                  // navigate to books view
+                  return BooksCatalog(globalContext: context);
                 } else {
                   return LoginScreen(globalContext: context);
                 }

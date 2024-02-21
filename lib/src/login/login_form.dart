@@ -21,6 +21,7 @@ class LoginComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // No direct named parameters in textTheme, so defining a custom map of styles
         // This custom map can be used throughout the app

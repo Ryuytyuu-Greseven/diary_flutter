@@ -16,6 +16,7 @@ void main() {
     testWidgets('should display a string of text', (WidgetTester tester) async {
       // Define a Widget
       const myWidget = MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Text('Hello'),
         ),

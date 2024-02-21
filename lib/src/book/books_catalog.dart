@@ -57,8 +57,17 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
   return GestureDetector(
       onTap: () {
         print('Book Selected!');
+        final bookId = '${singleDiary['_id']}';
         // book open logic
-        Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleBook(
+                      bookId: bookId,
+                      globalContext: context,
+                    )));
+
+        // Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
       },
       child: Container(
         width: 250,
