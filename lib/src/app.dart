@@ -26,6 +26,18 @@ class MyApp extends StatelessWidget {
   final SettingsController settingsController;
   static const storage = FlutterSecureStorage();
 
+  Future<Widget> initialState(BuildContext context,
+      {required BuildContext globalContext}) async {
+    // fetch user details and navigate to books
+    final accessToken = await storage.read(key: 'auth_token');
+    print('access token:${accessToken}');
+    if (accessToken == null || accessToken.toString().isEmpty) {
+      return LoginScreen(globalContext: globalContext);
+    } else {
+      return BooksCatalog(globalContext: globalContext);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
@@ -87,9 +99,6 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
-                // fetch user details and navigate to books
-                final accessToken = storage.read(key: 'access_token');
-
                 print(
                     'route details ${routeSettings.name} ${finalRoute} ${pathSegments}');
                 if (SettingsView.routeName.isNotEmpty &&
@@ -108,11 +117,24 @@ class MyApp extends StatelessWidget {
                   print('single book');
                   return SingleBook(
                       bookId: pathSegments[1], globalContext: context);
-                } else if (accessToken.toString().isNotEmpty) {
-                  // navigate to books view
-                  return BooksCatalog(globalContext: context);
                 } else {
-                  return LoginScreen(globalContext: context);
+                  print('Check me');
+                  return FutureBuilder<Widget>(
+                    future: initialState(context, globalContext: context),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Scaffold(
+                          body: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else {
+                        return snapshot.data ??
+                            Container(); // Return the widget from initialState
+                      }
+                    },
+                  );
                 }
               },
             );

@@ -120,7 +120,7 @@ class LoginForm extends State<LoginInputForm> {
         'username': usernameController.text,
         'password': passwordController.text
       };
-      final loginResponse = await apiService.login(body);
+      final loginResponse = await apiService.login(body, context);
       print('Login Response ${loginResponse['success']}');
       if (loginResponse != null && loginResponse['success'] == true) {
         invalidCredentials = false;
@@ -164,7 +164,7 @@ class LoginForm extends State<LoginInputForm> {
         'email': emailController.text,
         'profilename': profilenameController.text,
       };
-      final loginResponse = await apiService.singup(body);
+      final loginResponse = await apiService.singup(body, context);
       print('Signup Response ${loginResponse['success']}');
       if (loginResponse != null && loginResponse['success'] == true) {
         print('In Success');
@@ -194,7 +194,7 @@ class LoginForm extends State<LoginInputForm> {
       'otp': otp,
     };
 
-    final otpResponse = await apiService.verifyUser(body);
+    final otpResponse = await apiService.verifyUser(body, context);
     if (otpResponse != null && otpResponse['success']) {
       print('OTP verified');
       setState(() {

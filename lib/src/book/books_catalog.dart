@@ -65,7 +65,8 @@ Widget miniBook(BuildContext context, dynamic singleDiary) {
                 builder: (context) => SingleBook(
                       bookId: bookId,
                       globalContext: context,
-                    )));
+                    ),
+                settings: RouteSettings(arguments: singleDiary)));
 
         // Navigator.pushNamed(context, '/books-catalog/${singleDiary['_id']}');
       },
@@ -184,7 +185,7 @@ class BooksCatalogState extends State<BooksCatalog> {
   Future<void> fetchDairies() async {
     final body = {};
 
-    final diariesResponse = await apiService.selfDairies(body);
+    final diariesResponse = await apiService.selfDairies(body, context);
     print('Self Diaries Response ${diariesResponse['success']}');
 
     if (diariesResponse != null && diariesResponse['success'] == true) {
@@ -200,6 +201,11 @@ class BooksCatalogState extends State<BooksCatalog> {
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.black,
+            actions: [
+              IconButton(onPressed: () => {
+                Navigator.pushNamed(context, '/settings')
+              }, icon: const Icon(Icons.settings, color: Colors.white,))
+            ],
             title: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),

@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt.dart' as encryptService;
 import 'package:pointycastle/export.dart';
 
 class ApiSettings {
@@ -31,7 +32,7 @@ class ApiSettings {
     'REQUEST_PASS_RESET': '$globalUrl/users/pass_reset',
   };
 
-  requestServer(body, String url) async {
+  requestServer(body, String url,context) async {
     try {
       print('In Request');
       // encrypt data
@@ -51,6 +52,9 @@ class ApiSettings {
       // Check if the request was successful (status code 200)
       if ([200, 201].contains(response.statusCode)) {
         print('Response body: ${response.body}');
+      } else if ([401, 403].contains(response.statusCode)) {
+        await storage.deleteAll();
+        Navigator.pushNamed( context, '/login');
       } else {
         // Handle error scenarios
         print('Request failed with status: ${response.statusCode}');
@@ -136,14 +140,14 @@ class ApiSettings {
   encryptOld(dataToEncrypt) {
     try {
       if (enckey.isNotEmpty) {
-        final IOVI = IV.fromUtf8(enckey);
-        final key = Key.fromUtf8(enckey);
+        final IOVI = encryptService.IV.fromUtf8(enckey);
+        final key = encryptService.Key.fromUtf8(enckey);
         print(IOVI.base64);
         print(key.length);
         final plainText = jsonEncode(dataToEncrypt);
-        final encrypter = Encrypter(AES(
+        final encrypter = encryptService.Encrypter(encryptService.AES(
           key,
-          mode: AESMode.cbc,
+          mode: encryptService.AESMode.cbc,
         ));
         try {
           print('In Enc ${dataToEncrypt} ${plainText}');
@@ -168,9 +172,9 @@ class ApiSettings {
     try {
       print('In DEnc ${dataToDecrypt}');
 
-      final key = Key.fromUtf8(enckey);
-      final encrypter = Encrypter(AES(key));
-      final encryptedData = Encrypted.fromUtf8(dataToDecrypt);
+      final key = encryptService.Key.fromUtf8(enckey);
+      final encrypter = encryptService.Encrypter(encryptService.AES(key));
+      final encryptedData = encryptService.Encrypted.fromUtf8(dataToDecrypt);
       final decrypted = encrypter.decrypt(encryptedData);
       final decryptedText = jsonDecode(decrypted);
 

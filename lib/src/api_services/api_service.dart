@@ -5,59 +5,59 @@ class ApiService {
 
   ApiSettings apiSettings = ApiSettings();
 
-  login(body) {
+  login(body,context) {
     final url = '${ApiSettings.apis['LOGIN_USER']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  singup(body) {
+  singup(body,context) {
     final url = '${ApiSettings.apis['SIGNUP_USER']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  verifyUser(body) {
+  verifyUser(body,context) {
     final url = '${ApiSettings.apis['VERIFY_USER']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  resendOtp(body) {
+  resendOtp(body,context) {
     final url = '${ApiSettings.apis['RESEND_OTP']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  userDetails(body) {
+  userDetails(body,context) {
     final url = '${ApiSettings.apis['FETCH_USER_DETAILS']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  createDairy(body) {
+  createDairy(body,context) {
     final url = '${ApiSettings.apis['CREATE_DAIRY']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  selfDairies(body) {
+  selfDairies(body,context) {
     final url = '${ApiSettings.apis['FETCH_SELF_DAIRIES']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  dairyDetails(body) {
+  dairyDetails(body,context) {
     final url = '${ApiSettings.apis['FETCH_DAIRY_DETAILS']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  savePage(body) {
+  savePage(body,context) {
     final url = '${ApiSettings.apis['SAVE_PAGE']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
-  pagesFromDairy(body) {
+  pagesFromDairy(body,context) {
     final url = '${ApiSettings.apis['DAIRY_PAGES']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 
   // password reset request
-  forgotPassword(body) {
+  forgotPassword(body,context) {
     final url = '${ApiSettings.apis['REQUEST_PASS_RESET']}';
-    return apiSettings.requestServer(body, url);
+    return apiSettings.requestServer(body, url, context);
   }
 }
