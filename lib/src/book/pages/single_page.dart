@@ -9,6 +9,7 @@ class SinglePage extends StatelessWidget {
   Widget build(BuildContext context) {
     print('Page Details ${pageDetails}');
 
-    return Text(pageDetails?['text']);
+    // return Text(pageDetails?['text']);
+    return Text('Loading soon...');
   }
 }
