@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/material.dart';
 
 import 'src/app.dart';
 import 'src/settings/settings_controller.dart';
