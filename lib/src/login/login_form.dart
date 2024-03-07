@@ -2,6 +2,7 @@ import 'package:diary/src/api_services/api_service.dart';
 import 'package:diary/src/api_services/api_settings.dart';
 import 'package:diary/src/book/books_catalog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginComponent extends StatelessWidget {
@@ -291,6 +292,17 @@ class LoginForm extends State<LoginInputForm> {
                         TextFormField(
                           style: loginStylesHelper['loginInputText'],
                           controller: usernameController,
+                          // Disable the paste button
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: ''));
+                          },
+
+                          ///enableInteractiveSelection: false,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_ ]')),
+                            FilteringTextInputFormatter.deny(RegExp(r'')),
+                          ],
                           onChanged: (value) {
                             print(value);
                             setState(() {
@@ -320,6 +332,17 @@ class LoginForm extends State<LoginInputForm> {
                         ),
                         TextFormField(
                           controller: passwordController,
+                          // Disable the paste button
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: ''));
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_@ ]')),
+                            FilteringTextInputFormatter.deny(RegExp(r'')),
+                          ],
+
+                          ///enableInteractiveSelection: false,
                           onChanged: (value) {
                             print(value);
                           },
@@ -352,6 +375,18 @@ class LoginForm extends State<LoginInputForm> {
                         TextFormField(
                           style: loginStylesHelper['loginInputText'],
                           controller: profilenameController,
+
+                          // Disable the paste button
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: ''));
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_ ]')),
+                            FilteringTextInputFormatter.deny(RegExp(r'')),
+                          ],
+
+                          ///enableInteractiveSelection: false,
                           onChanged: (value) {
                             print(value);
                           },
@@ -375,6 +410,18 @@ class LoginForm extends State<LoginInputForm> {
                         TextFormField(
                           style: loginStylesHelper['loginInputText'],
                           controller: emailController,
+
+                          // Disable the paste button
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: ''));
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_ ]')),
+                            FilteringTextInputFormatter.deny(RegExp(r'')),
+                          ],
+
+                          ///enableInteractiveSelection: false,
                           onChanged: (value) {
                             print(value);
                             setState(() {
@@ -404,6 +451,18 @@ class LoginForm extends State<LoginInputForm> {
                         TextFormField(
                           style: loginStylesHelper['loginInputText'],
                           controller: usernameController,
+
+                          // Disable the paste button
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: ''));
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_ ]')),
+                            FilteringTextInputFormatter.deny(RegExp(r'')),
+                          ],
+
+                          ///enableInteractiveSelection: false,
                           onChanged: (value) {
                             print(value);
                             setState(() {
@@ -433,6 +492,18 @@ class LoginForm extends State<LoginInputForm> {
                         ),
                         TextFormField(
                           controller: passwordController,
+
+                          // Disable the paste button
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: ''));
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_@ ]')),
+                            FilteringTextInputFormatter.deny(RegExp(r'')),
+                          ],
+
+                          ///enableInteractiveSelection: false,
                           onChanged: (value) {
                             print(value);
                           },
