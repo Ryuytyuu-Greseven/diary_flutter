@@ -583,9 +583,9 @@ class LoginForm extends State<LoginInputForm> {
                             child: ElevatedButton(
                               onPressed: () {
                                 switchForm();
-                                print('Signuo');
+                                print('Switch');
                               },
-                              child: const Text('Signup'),
+                              child: const Text('Switch'),
                             ),
                           ),
                           Visibility(
