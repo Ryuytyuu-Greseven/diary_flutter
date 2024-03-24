@@ -272,6 +272,7 @@ class LoginForm extends State<LoginInputForm> {
       color: loginCardCol,
       padding: EdgeInsets.all(15),
       child: Center(
+          child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -577,16 +578,16 @@ class LoginForm extends State<LoginInputForm> {
                                 child: const Text('Sign Up'),
                               )),
                           const SizedBox(width: 20),
-                          // Visibility(
-                          //   visible: enableLoginForm || enableSignupForm,
-                          //   child: ElevatedButton(
-                          //     onPressed: () {
-                          //       switchForm();
-                          //       print('Switched');
-                          //     },
-                          //     child: const Text('Switch'),
-                          //   ),
-                          // ),
+                          Visibility(
+                            visible: enableLoginForm || enableSignupForm,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                switchForm();
+                                print('Signuo');
+                              },
+                              child: const Text('Signup'),
+                            ),
+                          ),
                           Visibility(
                             visible: enableOtpForm,
                             child: ElevatedButton(
@@ -610,7 +611,7 @@ class LoginForm extends State<LoginInputForm> {
                 ))
           ],
         ),
-      ),
+      )),
     ));
   }
 }
