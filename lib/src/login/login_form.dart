@@ -418,7 +418,7 @@ class LoginForm extends State<LoginInputForm> {
                           },
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                                RegExp(r'[a-zA-Z0-9_ ]')),
+                                RegExp(r'[a-zA-Z0-9_@. ]')),
                             FilteringTextInputFormatter.deny(RegExp(r'')),
                           ],
 
