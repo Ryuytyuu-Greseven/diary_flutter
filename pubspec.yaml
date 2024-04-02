@@ -4,7 +4,7 @@ description: "A new Flutter project."
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 1.0.1+5
+version: 1.0.1+7
 
 environment:
   sdk: ">=3.2.3 <4.0.0"
@@ -18,9 +18,10 @@ dependencies:
   crypto: ^3.0.0
   encrypt: ^5.0.0
   pointycastle: ^3.1.1
-  flutter_secure_storage: ^9.0.0
+  flutter_secure_storage: ^8.1.0
   google_fonts: ^5.1.0
-  # flutter_html: ^2.1.2
+  html: ^0.15.4
+  flutter_html: ^3.0.0-alpha.3
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:diary/src/book/pages/single_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class SingleBook extends StatefulWidget {
   final String bookId;
@@ -28,6 +31,9 @@ class SingleBookState extends State<SingleBook> {
         fontFamily: singleBookData['titleConfig']['font']);
 
     print('Selected Book ${singleBookData['pages'][0]}');
+
+    int currentPage = 0;
+
     return Scaffold(
       appBar: AppBar(
         // leading: IconButton(
@@ -40,10 +46,58 @@ class SingleBookState extends State<SingleBook> {
         titleTextStyle: TextStyle(color: Colors.white, fontSize: 25),
       ),
       body: Container(
-        color: Color(bgColor),
-        alignment: Alignment.center,
-        child: SinglePage(pageDetails: singleBookData?['pages'][0])
-      ),
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+              color: Color(bgColor),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white70, width: 4)),
+
+          // alignment: Alignment.center,
+          child: Column(
+            children: [
+              Expanded(
+                  child: SinglePage(
+                      pageDetails: singleBookData?['pages'][currentPage])),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const Text('Previous  Page',
+                        style: const TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      if (currentPage > 1) {
+                        setState(() {
+                          currentPage -= 1;
+                        });
+                      }
+
+                      print('Loading Previous Page ${currentPage}');
+                    },
+                  ),
+                  Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const Text(
+                      'Next Page',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        currentPage += 1;
+                      });
+                      print('Loading Next page ${currentPage}');
+                    },
+                  ),
+                ],
+              )
+            ],
+          )),
     );
   }
 }
